@@ -4,6 +4,7 @@ namespace App\Modules\Identity\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Database\Factories\UserFactory;
+use HieuDev92264\LaravelModules\traits\HasBaseMetadata;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -11,7 +12,7 @@ use Illuminate\Notifications\Notifiable;
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, HasBaseMetadata;
 
     /**
      * The attributes that are mass assignable.
@@ -43,10 +44,10 @@ class User extends Authenticatable
      */
     protected function casts(): array
     {
-        return [
+        return array_merge($this->baseMetadataCasts(), [
             'email_verified_at' => 'datetime',
             'last_login_at' => 'datetime',
             'password' => 'hashed',
-        ];
+        ]);
     }
 }
