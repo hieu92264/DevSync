@@ -4,10 +4,15 @@ namespace App\Modules\Identity\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Modules\Authorization\Models\Role;
+use App\Modules\Organization\Models\Department;
+use App\Modules\Organization\Models\Organization;
+use App\Modules\Organization\Models\OrganizationMember;
+use App\Modules\Organization\Models\UserEquipment;
 use Database\Factories\UserFactory;
 use HieuDev92264\LaravelModules\traits\HasBaseMetadata;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Collection;
@@ -79,5 +84,29 @@ class User extends Authenticatable
     public function hasPermission(string $permissionCode): bool
     {
         return $this->getAllPermissions()->contains('code', $permissionCode);
+    }
+
+    public function organizations(): BelongsToMany
+    {
+        return $this->belongsToMany(Organization::class, 'organization_members', 'user_id', 'organization_id')
+            ->using(OrganizationMember::class)
+            ->withPivot([
+                'is_active',
+                'user_name_created',
+                'user_name_updated',
+                'joined_at',
+                'left_at',
+            ])
+            ->withTimestamps();
+    }
+
+    public function managedDepartments(): HasMany
+    {
+        return $this->hasMany(Department::class, 'manager_id', 'id');
+    }
+
+    public function equipmentAssignments(): HasMany
+    {
+        return $this->hasMany(UserEquipment::class, 'user_id', 'id');
     }
 }
