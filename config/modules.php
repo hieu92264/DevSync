@@ -5,14 +5,14 @@ return [
     'namespace' => 'App\\Modules',
     //array for short name
     'aliases' => [
-        'AI' => 'ai',
-        'Api' => 'api',
-        'Audit' => 'audit',
-        'Authorization' => 'authori',
-        'Identity' => 'identity',
-        'Observability' => 'obs',
-        'Organization' => 'org',
-        'Project' => 'proj',
-        'Task' => 'task',
+        'ai' => 'AI',
+        'api' => 'Api',
+        'audit' => 'Audit',
+        'authori' => 'Authorization',
+        'identity' => 'Identity',
+        'obs' => 'Observability',
+        'org' => 'Organization',
+        'proj' => 'Project',
+        'task' => 'Task',
     ]
 ];
