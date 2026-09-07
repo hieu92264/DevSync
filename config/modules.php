@@ -14,5 +14,6 @@ return [
         'org' => 'Organization',
         'proj' => 'Project',
         'task' => 'Task',
-    ]
+    ],
+    'api_prefix' => 'api',
 ];

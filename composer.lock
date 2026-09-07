@@ -1064,12 +1064,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/hieu92264/laravel-modules-package.git",
-                "reference": "10c7b5baefd7a61f2e80078a50e0d165763eebeb"
+                "reference": "01920acd1b138369d664cf793275b3224739d7aa"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/hieu92264/laravel-modules-package/zipball/10c7b5baefd7a61f2e80078a50e0d165763eebeb",
-                "reference": "10c7b5baefd7a61f2e80078a50e0d165763eebeb",
+                "url": "https://api.github.com/repos/hieu92264/laravel-modules-package/zipball/01920acd1b138369d664cf793275b3224739d7aa",
+                "reference": "01920acd1b138369d664cf793275b3224739d7aa",
                 "shasum": ""
             },
             "default-branch": true,
@@ -1100,7 +1100,7 @@
                 "source": "https://github.com/hieu92264/laravel-modules-package/tree/main",
                 "issues": "https://github.com/hieu92264/laravel-modules-package/issues"
             },
-            "time": "2026-09-05T04:35:22+00:00"
+            "time": "2026-09-07T01:37:59+00:00"
         },
         {
             "name": "laravel/framework",
