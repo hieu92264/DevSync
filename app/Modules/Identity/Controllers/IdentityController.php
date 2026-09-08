@@ -19,5 +19,6 @@ class IdentityController extends Controller
         Auth::guard('api')->logout();
         return $this->success(null, 'Logged out successfully', 200);
     }
+
     public function me() {}
 }
