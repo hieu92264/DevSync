@@ -11,16 +11,19 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('permissions', function (Blueprint $table) {
+        Schema::create('projects', function (Blueprint $table) {
             $table->id();
             $table->metadataColumns();
             $table->timestamps();
 
             $table->string('code')->unique();
             $table->string('name');
-            $table->string('remark')->nullable();
-            $table->string('resource')->nullable();
-            $table->string('action')->nullable();
+            $table->text('description')->nullable();
+            $table->string('status');
+            $table->string('repository_url')->nullable();
+
+            $table->foreignId('organization_id')->constrained('organizations');
+            $table->foreignId('lead_id')->constrained('users');
         });
     }
 
@@ -29,6 +32,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('permissions');
+        Schema::dropIfExists('projects');
     }
 };

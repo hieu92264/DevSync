@@ -1,10 +1,13 @@
 <?php
 
 namespace App\Modules\Organization\Models;
+use App\Modules\Authorization\Models\ProjectMember;
 use App\Modules\Identity\Models\User;
+use App\Modules\Project\Models\Project;
 use HieuDev92264\LaravelModules\Base\BaseModel;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
 class Organization extends BaseModel
 {
@@ -31,10 +34,6 @@ class Organization extends BaseModel
     }
 
     //relationship
-    public function departments(): HasMany
-    {
-        return $this->hasMany(Department::class, 'organization_id', 'id');
-    }
 
     public function equipment(): HasMany
     {
@@ -53,5 +52,22 @@ class Organization extends BaseModel
                  'is_active',
              ])
             ->withTimestamps();
+    }
+
+    public function projects(): HasMany
+    {
+        return $this->hasMany(Project::class, 'organization_id', 'id');
+    }
+
+    public function projectMembers(): HasManyThrough
+    {
+        return $this->hasManyThrough(
+            ProjectMember::class,
+            Project::class,
+            'organization_id',
+            'project_id',
+            'id',
+            'id'
+        );
     }
 }

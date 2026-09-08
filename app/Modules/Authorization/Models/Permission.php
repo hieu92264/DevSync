@@ -15,7 +15,9 @@ class Permission extends BaseModel
     protected $fillable = [
         'code',
         'name',
-        'remark'
+        'remark',
+        'resource',
+        'action',
     ];
 
     /**

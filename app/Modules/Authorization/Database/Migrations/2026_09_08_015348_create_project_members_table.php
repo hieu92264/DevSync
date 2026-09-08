@@ -11,16 +11,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('permissions', function (Blueprint $table) {
+        Schema::create('project_members', function (Blueprint $table) {
             $table->id();
             $table->metadataColumns();
             $table->timestamps();
 
-            $table->string('code')->unique();
-            $table->string('name');
-            $table->string('remark')->nullable();
-            $table->string('resource')->nullable();
-            $table->string('action')->nullable();
+            $table->foreignId('project_id')->constrained('projects');
+            $table->foreignId('user_id')->constrained('users');
+
+            $table->string('team_type');
+            $table->dateTime('joined_at')->default(now());
+            $table->dateTime('left_at')->nullable();
         });
     }
 
@@ -29,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('permissions');
+        Schema::dropIfExists('project_members');
     }
 };
