@@ -4,7 +4,7 @@ namespace App\Modules\Organization\Controllers;
 
 use App\Modules\Organization\Interfaces\OrganizationServiceInterface;
 use App\Modules\Organization\Models\Organization;
-use App\Shared\Traits\ApiResponse;
+use HieuDev92264\LaravelModules\Traits\ApiResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;

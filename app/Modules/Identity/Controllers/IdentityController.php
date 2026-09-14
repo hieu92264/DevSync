@@ -3,7 +3,7 @@
 namespace App\Modules\Identity\Controllers;
 
 use App\Modules\Identity\Interfaces\IdentityServiceInterface;
-use App\Shared\Traits\ApiResponse;
+use HieuDev92264\LaravelModules\Traits\ApiResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
