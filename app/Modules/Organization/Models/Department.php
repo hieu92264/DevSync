@@ -1,12 +1,17 @@
 <?php
 
 namespace App\Modules\Organization\Models;
+
 use App\Modules\Identity\Models\User;
+use App\Modules\Organization\Database\Factories\DepartmentFactory;
 use HieuDev92264\LaravelModules\Base\BaseModel;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Department extends BaseModel
 {
+    use HasFactory;
+
     /**
      * The attributes that are mass assignable.
      *
@@ -30,6 +35,11 @@ class Department extends BaseModel
             'organization_id' => 'integer',
             'manager_id' => 'integer',
         ]);
+    }
+
+    protected static function newFactory(): DepartmentFactory
+    {
+        return DepartmentFactory::new();
     }
 
     // relationship
