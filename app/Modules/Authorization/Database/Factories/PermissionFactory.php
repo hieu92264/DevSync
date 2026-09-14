@@ -16,10 +16,12 @@ class PermissionFactory extends Factory
     {
         $resource = fake()->randomElement(['project', 'task', 'incident', 'repository']);
         $action = fake()->randomElement(['read', 'create', 'update', 'delete', 'manage']);
+        $suffix = fake()->unique()->numberBetween(100, 999);
 
         return [
-            'code' => "{$resource}.{$action}.".fake()->unique()->numberBetween(100, 999),
-            'name' => ucfirst($action).' '.ucfirst($resource),
+            'is_active' => true,
+            'code' => "{$resource}.{$action}.{$suffix}",
+            'name' => ucfirst($action).' '.ucfirst($resource)." {$suffix}",
             'remark' => fake()->sentence(),
             'resource' => $resource,
             'action' => $action,

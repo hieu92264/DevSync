@@ -6,27 +6,22 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('permissions', function (Blueprint $table) {
             $table->id();
             $table->metadataColumns();
             $table->timestamps();
-
-            $table->string('code')->unique();
-            $table->string('name');
-            $table->string('remark')->nullable();
-            $table->string('resource')->nullable();
-            $table->string('action')->nullable();
+            $table->string('code', 150)->unique();
+            $table->string('name')->unique();
+            $table->string('resource', 100)->nullable();
+            $table->string('action', 100)->nullable();
+            $table->text('remark')->nullable();
+            $table->index('resource');
+            $table->index('action');
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('permissions');

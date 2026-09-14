@@ -19,7 +19,7 @@ class ProjectMemberFactory extends Factory
         return [
             'project_id' => Project::factory(),
             'user_id' => User::factory(),
-            'team_type' => fake()->randomElement(['backend', 'frontend', 'quality', 'product']),
+            'team_type' => fake()->randomElement(['BACKEND', 'FRONTEND', 'QA', 'DEVOPS', 'BA', 'DESIGN']),
             'joined_at' => fake()->dateTimeBetween('-12 months', '-1 week'),
             'left_at' => null,
             'is_active' => true,

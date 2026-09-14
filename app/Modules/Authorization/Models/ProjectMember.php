@@ -3,6 +3,7 @@
 namespace App\Modules\Authorization\Models;
 
 use App\Modules\Authorization\Database\Factories\ProjectMemberFactory;
+use App\Modules\Identity\Models\User;
 use App\Modules\Project\Models\Project;
 use HieuDev92264\LaravelModules\traits\HasBaseMetadata;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -51,11 +52,17 @@ class ProjectMember extends Pivot
         return $this->belongsTo(Project::class);
     }
 
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+
     public function roles(): BelongsToMany
     {
         return $this->belongsToMany(Role::class, 'project_member_roles', 'project_member_id', 'role_id')
-            ->withTimestamps()
-            ->withPivot(['is_active', 'user_name_created', 'user_name_updated']);
+            ->using(ProjectMemberRole::class)
+            ->withPivot(['assigned_at', 'assigned_by', 'is_active', 'user_name_created', 'user_name_updated'])
+            ->withTimestamps();
     }
 
     protected static function newFactory(): ProjectMemberFactory

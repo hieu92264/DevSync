@@ -3,6 +3,7 @@
 namespace App\Modules\Organization\Models;
 
 use App\Modules\Authorization\Models\ProjectMember;
+use App\Modules\Authorization\Models\Role;
 use App\Modules\Identity\Models\User;
 use App\Modules\Organization\Database\Factories\OrganizationFactory;
 use App\Modules\Project\Models\Project;
@@ -33,9 +34,7 @@ class Organization extends BaseModel
      */
     protected function casts(): array
     {
-        return array_merge(parent::casts(), [
-            // 'date_column' => 'datetime',
-        ]);
+        return array_merge(parent::casts(), []);
     }
 
     protected static function newFactory(): OrganizationFactory
@@ -57,9 +56,9 @@ class Organization extends BaseModel
             ->withPivot([
                 'joined_at',
                 'left_at',
+                'is_active',
                 'user_name_created',
                 'user_name_updated',
-                'is_active',
             ])
             ->withTimestamps();
     }
@@ -67,6 +66,16 @@ class Organization extends BaseModel
     public function projects(): HasMany
     {
         return $this->hasMany(Project::class, 'organization_id', 'id');
+    }
+
+    public function organizationMembers(): HasMany
+    {
+        return $this->hasMany(OrganizationMember::class);
+    }
+
+    public function roles(): HasMany
+    {
+        return $this->hasMany(Role::class);
     }
 
     public function projectMembers(): HasManyThrough

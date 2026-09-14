@@ -11,6 +11,7 @@ use Database\Factories\UserFactory;
 use HieuDev92264\LaravelModules\traits\HasBaseMetadata;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Tymon\JWTAuth\Contracts\JWTSubject;
@@ -28,7 +29,7 @@ class User extends Authenticatable implements JWTSubject
     protected $fillable = [
         'user_name',
         'email',
-        'password',
+        'password_hash',
         'last_login_at',
         'email_verified_at',
     ];
@@ -39,7 +40,7 @@ class User extends Authenticatable implements JWTSubject
      * @var list<string>
      */
     protected $hidden = [
-        'password',
+        'password_hash',
         'remember_token',
     ];
 
@@ -53,7 +54,7 @@ class User extends Authenticatable implements JWTSubject
         return array_merge($this->baseMetadataCasts(), [
             'email_verified_at' => 'datetime',
             'last_login_at' => 'datetime',
-            'password' => 'hashed',
+            'password_hash' => 'hashed',
         ]);
     }
 
@@ -78,7 +79,17 @@ class User extends Authenticatable implements JWTSubject
         return [];
     }
 
+    public function getAuthPassword(): string
+    {
+        return $this->password_hash;
+    }
+
     // relationships
+    public function organizationMemberships(): HasMany
+    {
+        return $this->hasMany(OrganizationMember::class);
+    }
+
     public function organizations(): BelongsToMany
     {
         return $this->belongsToMany(Organization::class, 'organization_members', 'user_id', 'organization_id')
@@ -86,9 +97,9 @@ class User extends Authenticatable implements JWTSubject
             ->withPivot([
                 'joined_at',
                 'left_at',
+                'is_active',
                 'user_name_created',
                 'user_name_updated',
-                'is_active',
             ])
             ->withTimestamps();
     }
@@ -101,10 +112,15 @@ class User extends Authenticatable implements JWTSubject
                 'team_type',
                 'joined_at',
                 'left_at',
+                'is_active',
                 'user_name_created',
                 'user_name_updated',
-                'is_active',
             ])
             ->withTimestamps();
+    }
+
+    public function projectMemberships(): HasMany
+    {
+        return $this->hasMany(ProjectMember::class);
     }
 }

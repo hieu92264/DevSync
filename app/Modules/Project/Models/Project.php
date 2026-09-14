@@ -10,6 +10,7 @@ use HieuDev92264\LaravelModules\Base\BaseModel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Project extends BaseModel
 {
@@ -61,10 +62,15 @@ class Project extends BaseModel
                 'team_type',
                 'joined_at',
                 'left_at',
+                'is_active',
                 'user_name_created',
                 'user_name_updated',
-                'is_active',
             ])
             ->withTimestamps();
+    }
+
+    public function projectMembers(): HasMany
+    {
+        return $this->hasMany(ProjectMember::class);
     }
 }

@@ -53,7 +53,12 @@ class OrganizationDashboardTest extends TestCase
             'resource' => 'task',
             'action' => 'read',
         ]);
-        $role = Role::create(['code' => 'developer', 'name' => 'Developer']);
+        $role = Role::create([
+            'organization_id' => $organization->id,
+            'scope' => Role::SCOPE_PROJECT,
+            'code' => 'developer',
+            'name' => 'Developer',
+        ]);
         $role->permissions()->attach($permission->id);
 
         $membership = ProjectMember::query()

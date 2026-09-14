@@ -4,12 +4,15 @@ namespace Tests\Feature;
 
 use App\Modules\Authorization\Models\Permission;
 use App\Modules\Authorization\Models\ProjectMember;
+use App\Modules\Authorization\Models\ProjectMemberRole;
 use App\Modules\Authorization\Models\Role;
+use App\Modules\Authorization\Models\RolePermission;
 use App\Modules\Identity\Models\User;
 use App\Modules\Organization\Models\Department;
 use App\Modules\Organization\Models\Equipment;
 use App\Modules\Organization\Models\Organization;
 use App\Modules\Organization\Models\OrganizationMember;
+use App\Modules\Organization\Models\OrganizationMemberRole;
 use App\Modules\Project\Models\Project;
 use Database\Seeders\DevSyncDemoSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -36,12 +39,26 @@ class ModuleFactoryTest extends TestCase
         $role->permissions()->attach($permission->id);
         $membership->roles()->attach($role->id);
 
+        $organizationRole = Role::factory()
+            ->organizationScope()
+            ->create(['organization_id' => $organization->id]);
+        OrganizationMemberRole::factory()->create([
+            'organization_member_id' => OrganizationMember::query()
+                ->where('organization_id', $organization->id)
+                ->where('user_id', $user->id)
+                ->value('id'),
+            'role_id' => $organizationRole->id,
+        ]);
+        RolePermission::factory()->create();
+        ProjectMemberRole::factory()->create();
+
         $this->assertDatabaseCount('departments', 1);
         $this->assertDatabaseCount('equipment', 1);
         $this->assertDatabaseCount('organization_members', 1);
-        $this->assertDatabaseCount('project_members', 1);
-        $this->assertDatabaseCount('role_permissions', 1);
-        $this->assertDatabaseCount('project_member_roles', 1);
+        $this->assertDatabaseCount('project_members', 2);
+        $this->assertDatabaseCount('role_permissions', 2);
+        $this->assertDatabaseCount('project_member_roles', 2);
+        $this->assertDatabaseCount('organization_member_roles', 1);
     }
 
     public function test_demo_seeder_is_idempotent_and_builds_frontend_fixture_data(): void

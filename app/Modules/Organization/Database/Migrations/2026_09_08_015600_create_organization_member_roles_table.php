@@ -6,30 +6,24 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
-        Schema::create('project_member_roles', function (Blueprint $table) {
+        Schema::create('organization_member_roles', function (Blueprint $table) {
             $table->metadataColumns();
             $table->timestamps();
-            $table->foreignId('project_member_id')->constrained('project_members');
+            $table->foreignId('organization_member_id')->constrained('organization_members');
             $table->foreignId('role_id')->constrained('roles');
             $table->dateTime('assigned_at')->default(now());
             $table->foreignId('assigned_by')->nullable()->constrained('users')->nullOnDelete();
 
-            $table->primary(['project_member_id', 'role_id']);
-            $table->index('project_member_id');
+            $table->primary(['organization_member_id', 'role_id']);
+            $table->index('organization_member_id');
             $table->index('role_id');
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
-        Schema::dropIfExists('project_member_roles');
+        Schema::dropIfExists('organization_member_roles');
     }
 };

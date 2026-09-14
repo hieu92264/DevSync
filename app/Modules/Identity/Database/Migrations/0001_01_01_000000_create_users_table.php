@@ -15,11 +15,9 @@ return new class extends Migration
             $table->id();
             $table->metadataColumns();
             $table->timestamps();
-
-            $table->string('user_name')->unique();
-            $table->string('password');
+            $table->string('user_name', 100)->unique();
             $table->string('email')->unique();
-
+            $table->string('password_hash');
             $table->dateTime('last_login_at')->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->rememberToken();

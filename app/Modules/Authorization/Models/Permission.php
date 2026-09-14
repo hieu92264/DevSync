@@ -31,9 +31,7 @@ class Permission extends BaseModel
      */
     protected function casts(): array
     {
-        return array_merge(parent::casts(), [
-            // 'date_column' => 'datetime',
-        ]);
+        return array_merge(parent::casts(), []);
     }
 
     protected static function newFactory(): PermissionFactory
@@ -45,7 +43,8 @@ class Permission extends BaseModel
     public function roles(): BelongsToMany
     {
         return $this->belongsToMany(Role::class, 'role_permissions', 'permission_id', 'role_id')
-            ->withTimestamps()
-            ->withPivot(['is_active', 'user_name_created', 'user_name_updated']);
+            ->using(RolePermission::class)
+            ->withPivot(['is_active', 'user_name_created', 'user_name_updated'])
+            ->withTimestamps();
     }
 }

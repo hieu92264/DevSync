@@ -15,13 +15,16 @@ return new class extends Migration
             $table->id();
             $table->metadataColumns();
             $table->timestamps();
-
             $table->foreignId('project_id')->constrained('projects');
             $table->foreignId('user_id')->constrained('users');
-
-            $table->string('team_type');
+            $table->string('team_type', 50)->nullable();
             $table->dateTime('joined_at')->default(now());
             $table->dateTime('left_at')->nullable();
+
+            $table->unique(['project_id', 'user_id']);
+            $table->index('project_id');
+            $table->index('user_id');
+            $table->index('team_type');
         });
     }
 

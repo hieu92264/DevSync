@@ -6,27 +6,25 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('roles', function (Blueprint $table) {
             $table->id();
             $table->metadataColumns();
-
-            $table->string('code')->unique();
+            $table->timestamps();
+            $table->foreignId('organization_id')->constrained('organizations');
+            $table->string('scope', 30);
+            $table->string('code', 100);
             $table->string('name');
             $table->integer('priority')->default(0);
-            $table->string('remark')->nullable();
-
-            $table->timestamps();
+            $table->text('remark')->nullable();
+            $table->unique(['organization_id', 'scope', 'code']);
+            $table->index('organization_id');
+            $table->index('scope');
+            $table->index('priority');
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('roles');

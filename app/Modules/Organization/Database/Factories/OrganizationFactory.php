@@ -16,6 +16,7 @@ class OrganizationFactory extends Factory
     public function definition(): array
     {
         return [
+            'is_active' => true,
             'code' => Str::lower(fake()->unique()->bothify('org-###??')),
             'name' => fake()->company(),
         ];
