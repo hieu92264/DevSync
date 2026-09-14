@@ -1,16 +1,21 @@
 <?php
 
 namespace App\Modules\Organization\Models;
+
 use App\Modules\Authorization\Models\ProjectMember;
 use App\Modules\Identity\Models\User;
+use App\Modules\Organization\Database\Factories\OrganizationFactory;
 use App\Modules\Project\Models\Project;
 use HieuDev92264\LaravelModules\Base\BaseModel;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
 class Organization extends BaseModel
 {
+    use HasFactory;
+
     /**
      * The attributes that are mass assignable.
      *
@@ -33,7 +38,12 @@ class Organization extends BaseModel
         ]);
     }
 
-    //relationship
+    protected static function newFactory(): OrganizationFactory
+    {
+        return OrganizationFactory::new();
+    }
+
+    // relationship
 
     public function equipment(): HasMany
     {
@@ -44,13 +54,13 @@ class Organization extends BaseModel
     {
         return $this->belongsToMany(User::class, 'organization_members', 'organization_id', 'user_id')
             ->using(OrganizationMember::class)
-             ->withPivot([
-                 'joined_at',
-                 'left_at',
-                 'user_name_created',
-                 'user_name_updated',
-                 'is_active',
-             ])
+            ->withPivot([
+                'joined_at',
+                'left_at',
+                'user_name_created',
+                'user_name_updated',
+                'is_active',
+            ])
             ->withTimestamps();
     }
 

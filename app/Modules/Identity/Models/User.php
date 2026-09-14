@@ -4,26 +4,21 @@ namespace App\Modules\Identity\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Modules\Authorization\Models\ProjectMember;
-use App\Modules\Authorization\Models\Role;
-use App\Modules\Organization\Models\Department;
 use App\Modules\Organization\Models\Organization;
 use App\Modules\Organization\Models\OrganizationMember;
-use App\Modules\Organization\Models\UserEquipment;
 use App\Modules\Project\Models\Project;
 use Database\Factories\UserFactory;
 use HieuDev92264\LaravelModules\traits\HasBaseMetadata;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Support\Collection;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
 class User extends Authenticatable implements JWTSubject
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable, HasBaseMetadata;
+    use HasBaseMetadata, HasFactory, Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -35,7 +30,7 @@ class User extends Authenticatable implements JWTSubject
         'email',
         'password',
         'last_login_at',
-        'email_verified_at'
+        'email_verified_at',
     ];
 
     /**
@@ -62,10 +57,13 @@ class User extends Authenticatable implements JWTSubject
         ]);
     }
 
+    protected static function newFactory(): UserFactory
+    {
+        return UserFactory::new();
+    }
+
     /**
      * Get the identifier that will be stored in the subject claim of the JWT.
-     *
-     * @return mixed
      */
     public function getJWTIdentifier(): mixed
     {
@@ -74,18 +72,17 @@ class User extends Authenticatable implements JWTSubject
 
     /**
      * Return a key value array, containing any custom claims to be added to the JWT.
-     *
-     * @return array
      */
     public function getJWTCustomClaims(): array
     {
         return [];
     }
 
-    //relationships
+    // relationships
     public function organizations(): BelongsToMany
     {
         return $this->belongsToMany(Organization::class, 'organization_members', 'user_id', 'organization_id')
+            ->using(OrganizationMember::class)
             ->withPivot([
                 'joined_at',
                 'left_at',

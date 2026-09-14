@@ -2,7 +2,8 @@
 
 namespace App\Modules\Identity\Controllers;
 
-use HieuDev92264\LaravelModules\Traits\ApiResponse;
+use App\Modules\Identity\Interfaces\IdentityServiceInterface;
+use App\Shared\Traits\ApiResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -13,11 +14,13 @@ class IdentityController extends Controller
 {
     use ApiResponse;
 
-    public function __construct()
+    public function __construct(protected readonly IdentityServiceInterface $identityService)
     {
-        $this->middleware('auth:api', ['except' => ['login', 'register']]);
+        $this->middleware('auth:api', ['except' => ['login']]);
     }
-    public function login(Request $request): JsonResponse {
+
+    public function login(Request $request): JsonResponse
+    {
         $request->validate([
             'login' => ['required', 'string'],
             'password' => ['required', 'string'],
@@ -28,9 +31,11 @@ class IdentityController extends Controller
         $fieldType = filter_var($loginInput, FILTER_VALIDATE_EMAIL) ? 'email' : 'user_name';
         $credentials = [$fieldType => $loginInput, 'password' => $request->password];
 
-        if(!$token = Auth::guard('api')->attempt($credentials)) {
+        if (! $token = Auth::guard('api')->attempt($credentials)) {
             return $this->error(null, 'Unauthorized', Response::HTTP_UNAUTHORIZED);
         }
+
+        Auth::guard('api')->user()?->updateQuietly(['last_login_at' => now()]);
 
         return $this->respondWithToken($token);
     }
@@ -38,11 +43,14 @@ class IdentityController extends Controller
     public function logout(): JsonResponse
     {
         Auth::guard('api')->logout();
+
         return $this->success(null, 'Logged out successfully', 200);
     }
 
-    public function me() {
+    public function me(): JsonResponse
+    {
         $user = Auth::guard('api')->user();
+
         return $this->success($user, 'User retrieved successfully', 200);
     }
 
@@ -56,7 +64,15 @@ class IdentityController extends Controller
         return $this->apiResponse([
             'access_token' => $token,
             'token_type' => 'bearer',
-            'expires_in' => Auth::guard('api')->factory()->getTTL() * 60
+            'expires_in' => Auth::guard('api')->factory()->getTTL() * 60,
         ], 'Success', Response::HTTP_OK);
+    }
+
+    public function organizations(Request $request): JsonResponse
+    {
+        $userId = $request->user()->id;
+        $data = $this->identityService->getOrganizationByUser($userId);
+
+        return $this->success($data, 'Organizations retrieved successfully', 200);
     }
 }

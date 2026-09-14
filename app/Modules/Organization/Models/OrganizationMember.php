@@ -2,10 +2,17 @@
 
 namespace App\Modules\Organization\Models;
 
-use HieuDev92264\LaravelModules\Base\BaseModel;
+use App\Modules\Organization\Database\Factories\OrganizationMemberFactory;
+use HieuDev92264\LaravelModules\traits\HasBaseMetadata;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\Pivot;
 
-class OrganizationMember extends BaseModel
+class OrganizationMember extends Pivot
 {
+    use HasBaseMetadata, HasFactory;
+
+    protected $table = 'organization_members';
+
     /**
      * The attributes that are mass assignable.
      *
@@ -25,9 +32,14 @@ class OrganizationMember extends BaseModel
      */
     protected function casts(): array
     {
-        return array_merge(parent::casts(), [
-             'joined_at' => 'datetime',
-             'left_at' => 'datetime',
+        return array_merge($this->baseMetadataCasts(), [
+            'joined_at' => 'datetime',
+            'left_at' => 'datetime',
         ]);
+    }
+
+    protected static function newFactory(): OrganizationMemberFactory
+    {
+        return OrganizationMemberFactory::new();
     }
 }

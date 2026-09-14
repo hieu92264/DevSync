@@ -2,16 +2,19 @@
 
 namespace App\Modules\Project\Models;
 
-
 use App\Modules\Authorization\Models\ProjectMember;
 use App\Modules\Identity\Models\User;
 use App\Modules\Organization\Models\Organization;
+use App\Modules\Project\Database\Factories\ProjectFactory;
 use HieuDev92264\LaravelModules\Base\BaseModel;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Project extends BaseModel
 {
+    use HasFactory;
+
     /**
      * The attributes that are mass assignable.
      *
@@ -39,13 +42,18 @@ class Project extends BaseModel
         ]);
     }
 
+    protected static function newFactory(): ProjectFactory
+    {
+        return ProjectFactory::new();
+    }
+
     // relationships
     public function organization(): BelongsTo
     {
         return $this->belongsTo(Organization::class, 'organization_id');
     }
 
-    public function ProjectMembers(): BelongsToMany
+    public function members(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'project_members', 'project_id', 'user_id')
             ->using(ProjectMember::class)
