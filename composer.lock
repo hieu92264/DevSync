@@ -1129,13 +1129,22 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/hieu92264/laravel-modules-package.git",
-                "reference": "9096495adcbe1c00f7b2ca3f7d66ee0bd5805bbb"
+                "reference": "727e5776b9649c87025bcd3d0fe4ed2a4b70a4bc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/hieu92264/laravel-modules-package/zipball/9096495adcbe1c00f7b2ca3f7d66ee0bd5805bbb",
-                "reference": "9096495adcbe1c00f7b2ca3f7d66ee0bd5805bbb",
+                "url": "https://api.github.com/repos/hieu92264/laravel-modules-package/zipball/727e5776b9649c87025bcd3d0fe4ed2a4b70a4bc",
+                "reference": "727e5776b9649c87025bcd3d0fe4ed2a4b70a4bc",
                 "shasum": ""
+            },
+            "require": {
+                "illuminate/console": "^10.0|^11.0|^12.0|^13.0",
+                "illuminate/database": "^10.0|^11.0|^12.0|^13.0",
+                "illuminate/filesystem": "^10.0|^11.0|^12.0|^13.0",
+                "illuminate/http": "^10.0|^11.0|^12.0|^13.0",
+                "illuminate/routing": "^10.0|^11.0|^12.0|^13.0",
+                "illuminate/support": "^10.0|^11.0|^12.0|^13.0",
+                "php": "^8.2"
             },
             "default-branch": true,
             "type": "library",
@@ -1151,6 +1160,11 @@
                     "HieuDev92264\\LaravelModules\\": "src/"
                 }
             },
+            "scripts": {
+                "test": [
+                    "@php tests/verify.php"
+                ]
+            },
             "license": [
                 "MIT"
             ],
@@ -1165,7 +1179,7 @@
                 "source": "https://github.com/hieu92264/laravel-modules-package/tree/main",
                 "issues": "https://github.com/hieu92264/laravel-modules-package/issues"
             },
-            "time": "2026-09-08T07:20:30+00:00"
+            "time": "2026-09-14T09:29:01+00:00"
         },
         {
             "name": "laravel/framework",
