@@ -1,6 +1,12 @@
 <?php
 
 use App\Http\Middleware\SetLocale;
+use App\Modules\Authorization\Middleware\CheckPermission;
+use App\Modules\Authorization\Middleware\EnsureActiveUser;
+use App\Modules\Authorization\Middleware\EnsureOrganizationMember;
+use App\Modules\Authorization\Middleware\EnsureProjectMember;
+use App\Modules\Authorization\Middleware\ResolveOrganizationContext;
+use App\Modules\Authorization\Middleware\ResolveProjectContext;
 use App\Shared\Helpers\LocaleHelper;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\AuthenticationException;
@@ -23,6 +29,14 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->appendToGroup('web', SetLocale::class);
         $middleware->appendToGroup('api', SetLocale::class);
+        $middleware->alias([
+            'active.user' => EnsureActiveUser::class,
+            'organization.context' => ResolveOrganizationContext::class,
+            'organization.member' => EnsureOrganizationMember::class,
+            'project.context' => ResolveProjectContext::class,
+            'project.member' => EnsureProjectMember::class,
+            'permission' => CheckPermission::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->respond(function (HttpResponse $response, Throwable $exception, Request $request): HttpResponse {

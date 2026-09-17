@@ -72,7 +72,7 @@ class Role extends BaseModel
 
     public function projectMembers(): BelongsToMany
     {
-        return $this->belongsToMany(ProjectMember::class, 'project_member_roles')
+        return $this->belongsToMany(ProjectMember::class, 'project_member_roles', 'role_id', 'project_member_id', 'id', 'id')
             ->using(ProjectMemberRole::class)
             ->withPivot(['assigned_at', 'assigned_by', 'is_active', 'user_name_created', 'user_name_updated'])
             ->withTimestamps();

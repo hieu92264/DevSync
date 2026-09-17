@@ -77,9 +77,9 @@ class DevSyncDemoSeeder extends Seeder
         $devSyncRoles = $this->seedRoles($devSync, $permissions);
         $acmeRoles = $this->seedRoles($acme, $permissions);
 
-        $this->assignOrganizationRole($devSync, $users['demo.admin'], $devSyncRoles['owner']);
-        $this->assignOrganizationRole($devSync, $users['demo.minh.manager'], $devSyncRoles['member']);
-        $this->assignOrganizationRole($acme, $users['demo.admin'], $acmeRoles['owner']);
+        $this->assignOrganizationRole($devSync, $users['demo.admin'], $devSyncRoles['OWNER']);
+        $this->assignOrganizationRole($devSync, $users['demo.minh.manager'], $devSyncRoles['ADMIN']);
+        $this->assignOrganizationRole($acme, $users['demo.admin'], $acmeRoles['OWNER']);
 
         $portal = Project::updateOrCreate(
             ['code' => 'devsync-portal'],
@@ -115,14 +115,14 @@ class DevSyncDemoSeeder extends Seeder
             ],
         );
 
-        $this->syncProjectMember($portal, $users['demo.minh.manager'], 'BA', [$devSyncRoles['project-manager']]);
-        $this->syncProjectMember($portal, $users['demo.lan.backend'], 'BACKEND', [$devSyncRoles['developer']]);
-        $this->syncProjectMember($portal, $users['demo.an.frontend'], 'FRONTEND', [$devSyncRoles['developer']]);
-        $this->syncProjectMember($portal, $users['demo.hoa.qa'], 'QA', [$devSyncRoles['quality-engineer']]);
-        $this->syncProjectMember($mobile, $users['demo.minh.manager'], 'BA', [$devSyncRoles['project-manager']]);
-        $this->syncProjectMember($mobile, $users['demo.an.frontend'], 'FRONTEND', [$devSyncRoles['developer']]);
-        $this->syncProjectMember($acmePlatform, $users['demo.admin'], 'BA', [$acmeRoles['project-manager']]);
-        $this->syncProjectMember($acmePlatform, $users['demo.lan.backend'], 'BACKEND', [$acmeRoles['developer']]);
+        $this->syncProjectMember($portal, $users['demo.minh.manager'], 'BA', [$devSyncRoles['PROJECT_MANAGER']]);
+        $this->syncProjectMember($portal, $users['demo.lan.backend'], 'BACKEND', [$devSyncRoles['DEVELOPER']]);
+        $this->syncProjectMember($portal, $users['demo.an.frontend'], 'FRONTEND', [$devSyncRoles['DEVELOPER']]);
+        $this->syncProjectMember($portal, $users['demo.hoa.qa'], 'QA', [$devSyncRoles['TESTER']]);
+        $this->syncProjectMember($mobile, $users['demo.minh.manager'], 'BA', [$devSyncRoles['PROJECT_MANAGER']]);
+        $this->syncProjectMember($mobile, $users['demo.an.frontend'], 'FRONTEND', [$devSyncRoles['DEVELOPER']]);
+        $this->syncProjectMember($acmePlatform, $users['demo.admin'], 'BA', [$acmeRoles['PROJECT_MANAGER']]);
+        $this->syncProjectMember($acmePlatform, $users['demo.lan.backend'], 'BACKEND', [$acmeRoles['DEVELOPER']]);
     }
 
     private function syncOrganizationMembers(Organization $organization, array $users): void
@@ -137,16 +137,13 @@ class DevSyncDemoSeeder extends Seeder
     private function seedPermissions(): Collection
     {
         return collect([
-            ['code' => 'project.read', 'name' => 'View projects', 'resource' => 'project', 'action' => 'read'],
-            ['code' => 'project.manage', 'name' => 'Manage projects', 'resource' => 'project', 'action' => 'manage'],
-            ['code' => 'task.read', 'name' => 'View tasks', 'resource' => 'task', 'action' => 'read'],
-            ['code' => 'task.create', 'name' => 'Create tasks', 'resource' => 'task', 'action' => 'create'],
-            ['code' => 'task.update', 'name' => 'Update tasks', 'resource' => 'task', 'action' => 'update'],
-            ['code' => 'task.manage', 'name' => 'Manage tasks', 'resource' => 'task', 'action' => 'manage'],
-            ['code' => 'incident.read', 'name' => 'View incidents', 'resource' => 'incident', 'action' => 'read'],
-            ['code' => 'incident.create', 'name' => 'Create incidents', 'resource' => 'incident', 'action' => 'create'],
-            ['code' => 'incident.manage', 'name' => 'Manage incidents', 'resource' => 'incident', 'action' => 'manage'],
-        ])->mapWithKeys(function (array $attributes): array {
+            'organization.view', 'organization.update', 'organization.member.view', 'organization.member.invite', 'organization.member.update', 'organization.member.remove',
+            'project.create', 'project.view', 'project.update', 'project.member.view', 'project.member.manage',
+            'task.view_all', 'task.create', 'task.update_all', 'task.update_assigned', 'task.assign', 'task.delete',
+            'api.view', 'api.create', 'api.update', 'api.execute', 'log.view', 'incident.view', 'incident.update', 'ai.analysis.view', 'ai.analysis.create',
+        ])->mapWithKeys(function (string $code): array {
+            [$resource, $action] = array_pad(explode('.', $code, 2), 2, null);
+            $attributes = ['code' => $code, 'name' => str_replace('.', ' ', $code), 'resource' => $resource, 'action' => $action, 'is_active' => true];
             $permission = Permission::updateOrCreate(['code' => $attributes['code']], $attributes);
 
             return [$permission->code => $permission];
@@ -155,36 +152,45 @@ class DevSyncDemoSeeder extends Seeder
 
     private function seedRoles(Organization $organization, Collection $permissions): Collection
     {
+        $all = $permissions->keys()->all();
         $definitions = [
-            'owner' => [
+            'OWNER' => [
                 'scope' => Role::SCOPE_ORGANIZATION,
                 'name' => 'Owner',
                 'priority' => 1000,
-                'permissions' => ['project.read', 'project.manage', 'task.read', 'task.create', 'task.update', 'task.manage', 'incident.read', 'incident.create', 'incident.manage'],
+                'permissions' => $all,
             ],
-            'member' => [
+            'ADMIN' => [
                 'scope' => Role::SCOPE_ORGANIZATION,
-                'name' => 'Member',
-                'priority' => 10,
-                'permissions' => ['project.read', 'task.read', 'incident.read'],
+                'name' => 'Administrator',
+                'priority' => 900,
+                'permissions' => ['organization.view', 'organization.update', 'organization.member.view', 'organization.member.invite', 'organization.member.update', 'organization.member.remove', 'project.create', 'project.view', 'project.update', 'project.member.view', 'project.member.manage'],
             ],
-            'project-manager' => [
+            'PROJECT_MANAGER' => [
                 'scope' => Role::SCOPE_PROJECT,
                 'name' => 'Project Manager',
                 'priority' => 100,
-                'permissions' => ['project.read', 'project.manage', 'task.read', 'task.create', 'task.update', 'task.manage', 'incident.read', 'incident.create', 'incident.manage'],
+                'permissions' => ['project.view', 'project.update', 'project.member.view', 'project.member.manage', 'task.view_all', 'task.create', 'task.update_all', 'task.assign', 'task.delete', 'api.view', 'api.create', 'api.update', 'api.execute', 'log.view', 'incident.view', 'incident.update', 'ai.analysis.view', 'ai.analysis.create'],
             ],
-            'developer' => [
+            'TECH_LEAD' => [
+                'scope' => Role::SCOPE_PROJECT, 'name' => 'Tech Lead', 'priority' => 80,
+                'permissions' => ['project.view', 'project.member.view', 'task.view_all', 'task.create', 'task.update_all', 'task.assign', 'api.view', 'api.create', 'api.update', 'api.execute', 'log.view', 'incident.view', 'incident.update', 'ai.analysis.view', 'ai.analysis.create'],
+            ],
+            'DEVELOPER' => [
                 'scope' => Role::SCOPE_PROJECT,
                 'name' => 'Developer',
                 'priority' => 50,
-                'permissions' => ['project.read', 'task.read', 'task.create', 'task.update', 'incident.read', 'incident.create'],
+                'permissions' => ['project.view', 'task.view_all', 'task.create', 'task.update_assigned', 'api.view', 'api.execute', 'log.view', 'incident.view', 'ai.analysis.view', 'ai.analysis.create'],
             ],
-            'quality-engineer' => [
+            'TESTER' => [
                 'scope' => Role::SCOPE_PROJECT,
-                'name' => 'Quality Engineer',
+                'name' => 'Tester',
                 'priority' => 40,
-                'permissions' => ['project.read', 'task.read', 'task.update', 'incident.read', 'incident.create', 'incident.manage'],
+                'permissions' => ['project.view', 'task.view_all', 'task.update_assigned', 'api.view', 'api.execute', 'incident.view'],
+            ],
+            'VIEWER' => [
+                'scope' => Role::SCOPE_PROJECT, 'name' => 'Viewer', 'priority' => 10,
+                'permissions' => ['project.view', 'task.view_all', 'api.view', 'incident.view'],
             ],
         ];
 
