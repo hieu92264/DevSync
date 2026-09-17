@@ -53,6 +53,9 @@ class FileHelper
         throw new \Exception('Failed to convert and save WebP image.');
     }
 
+    /**
+     * @throws \Exception
+     */
     public static function storeMultipleAsWebp(array $files, string $directory, ?string $disk = null, int $quality = 80): array
     {
         $results = [];
