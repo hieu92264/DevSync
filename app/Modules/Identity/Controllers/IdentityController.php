@@ -97,7 +97,7 @@ class IdentityController extends Controller
         return $this->success([
             'organization' => $context->organization->only(['id', 'code', 'name']),
             'project' => $context->project->only(['id', 'code', 'name']),
-            'membership' => $context->projectMember->only(['id', 'team_type']),
+            'membership' => $context->projectMember?->only(['id', 'team_type']),
             'roles' => $this->authorizationService->projectRoleCodes($context),
             'permissions' => $this->authorizationService->permissionCodes($request->user(), $context),
         ], 'Context retrieved successfully');

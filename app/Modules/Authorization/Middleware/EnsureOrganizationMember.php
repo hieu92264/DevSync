@@ -17,7 +17,7 @@ class EnsureOrganizationMember
             ->whereNull('left_at')
             ->where('organization_id', $context->organization?->id)
             ->where('user_id', $request->user()->id)->first();
-        if (! $member) {
+        if (! $member && config('authorization.enforced')) {
             throw new AccessDeniedHttpException('You are not an active organization member.');
         }
         $context->organizationMember = $member;

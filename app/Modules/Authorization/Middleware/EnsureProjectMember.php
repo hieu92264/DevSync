@@ -15,7 +15,7 @@ class EnsureProjectMember
         $context = app(RequestContext::class);
         $member = ProjectMember::query()->active()->whereNull('left_at')
             ->where('project_id', $context->project?->id)->where('user_id', $request->user()->id)->first();
-        if (! $member) {
+        if (! $member && config('authorization.enforced')) {
             throw new AccessDeniedHttpException('You are not an active project member.');
         }
         $context->projectMember = $member;

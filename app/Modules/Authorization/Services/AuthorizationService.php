@@ -10,6 +10,10 @@ class AuthorizationService implements AuthorizationServiceInterface
 {
     public function can(User $user, string $permission, RequestContext $context): bool
     {
+        if (! config('authorization.enforced')) {
+            return true;
+        }
+
         return in_array($permission, $this->permissionCodes($user, $context), true);
     }
 
