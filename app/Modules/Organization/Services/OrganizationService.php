@@ -17,7 +17,7 @@ class OrganizationService implements OrganizationServiceInterface
             ->wherePivotNull('left_at')
             ->exists();
 
-        if (! $hasActiveMembership) {
+        if (config('authorization.enforced') && ! $hasActiveMembership) {
             throw new AuthorizationException('You are not an active member of this organization.');
         }
 

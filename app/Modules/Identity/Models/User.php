@@ -84,6 +84,11 @@ class User extends Authenticatable implements JWTSubject
         return $this->password_hash;
     }
 
+    public function isActive(): bool
+    {
+        return $this->is_active;
+    }
+
     // relationships
     public function organizationMemberships(): HasMany
     {

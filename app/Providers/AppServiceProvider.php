@@ -2,6 +2,9 @@
 
 namespace App\Providers;
 
+use App\Modules\Authorization\Services\AuthorizationService;
+use App\Modules\Authorization\Services\AuthorizationServiceInterface;
+use App\Modules\Authorization\Services\RequestContext;
 use App\Modules\Identity\Interfaces\IdentityServiceInterface;
 use App\Modules\Identity\Services\IdentityService;
 use App\Modules\Organization\Interfaces\OrganizationServiceInterface;
@@ -30,5 +33,7 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->app->singleton(OrganizationServiceInterface::class, OrganizationService::class);
         $this->app->singleton(IdentityServiceInterface::class, IdentityService::class);
+        $this->app->scoped(RequestContext::class);
+        $this->app->singleton(AuthorizationServiceInterface::class, AuthorizationService::class);
     }
 }
